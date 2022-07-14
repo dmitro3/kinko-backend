@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import {getCachedLaunchpadInfo, getCachedLaunchpadStatus} from 'cache';
-import {EARLY_ACCESS_TOKEN_ADDRESS, EARLY_ACCESS_TOKEN_AMOUNT, WGLMR_ADDRESS} from 'constants/env';
+import {EARLY_ACCESS_TOKEN_ADDRESS, EARLY_ACCESS_TOKEN_AMOUNT, WBNB_ADDRESS} from 'constants/env';
 import {openDb} from 'db';
 import {bufferToHex, ecrecover, hashPersonalMessage, pubToAddress} from 'ethereumjs-util';
 import {Request, Response} from 'express';
@@ -75,7 +75,7 @@ interface GetIlosData {
   token_fee_address: string;
   referral_fee_address: string;
   listing_rate_percent: string;
-  is_glmr: string;
+  is_bnb: string;
   add_liquidity_transaction_hash: string;
   referral: IloDataReferallRequest[];
 }
@@ -182,7 +182,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     lockPeriod,
     startBlockDate,
     endBlockDate,
-    isGLMR,
+    is_BNB,
   } = launchpadInfo;
 
   const launchpadFeeInfo = await rpc.getLaunchpadFeeInfo(launchpadAddress);
@@ -217,9 +217,9 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     const baseTokenSymbol = await rpc.getERC20Symbol(launchpadInfo.bToken);
 
     const adaptedBaseTokenName =
-      launchpadInfo.bToken.toLowerCase() === WGLMR_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenName;
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenName;
     const adaptedBaseTokenSymbol =
-      launchpadInfo.bToken.toLowerCase() === WGLMR_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenSymbol;
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenSymbol;
 
     stmt = await db.prepare(`
 			INSERT INTO "ilos" (
@@ -253,7 +253,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				"token_fee_address",
 				"referral_fee_address",
 				"listing_rate_percent",
-				"is_glmr"
+				"is_bnb"
 			) VALUES (
 				$ilo_name,
 				$creator_address,
@@ -285,7 +285,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				$token_fee_address,
 				$referral_fee_address,
 				$listing_rate_percent,
-				$is_glmr
+				$is_bnb
 			);`);
     try {
       await stmt.bind({
@@ -319,7 +319,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
         $token_fee_address: tokenFeeAddress,
         $referral_fee_address: referralFeeAddress,
         $listing_rate_percent: listingRatePercent.toString(),
-        $is_glmr: isGLMR ? 1 : 0,
+        $is_bnb: is_BNB ? 1 : 0,
       });
       await stmt.run();
     } finally {
@@ -365,7 +365,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
 				"presale_amount",
 				"energyfi_token_fee_percent",
 				"listing_rate_percent",
-				"is_glmr",
+				"is_bnb",
 				"add_liquidity_transaction_hash"
 			FROM "ilos"
 			WHERE LOWER("launchpad_address") = LOWER($launchpad_address)`);
@@ -395,7 +395,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         presale_amount: string;
         energyfi_token_fee_percent: string;
         listing_rate_percent: string;
-        is_glmr: number;
+        is_bnb: number;
         add_liquidity_transaction_hash: string | null;
       }>();
       if (!result) {
@@ -425,7 +425,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         presale_amount,
         energyfi_token_fee_percent,
         listing_rate_percent,
-        is_glmr,
+        is_bnb,
         add_liquidity_transaction_hash,
       } = result;
       const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
@@ -502,7 +502,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         energyfiTokenFeePercent: Number(energyfi_token_fee_percent),
         saleTokenTotalSupply: saleTokenTotalSupply.toString(),
         listingRatePercent: Number(listing_rate_percent),
-        isGlmr: !!is_glmr,
+        is_Bnb: !!is_bnb,
         lpGenerationTimestamp: lpGenerationTimestamp.toString(),
         addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
       };
@@ -543,7 +543,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
         presale_amount: string;
         energyfi_token_fee_percent: string;
         listing_rate_percent: string;
-        is_glmr: number;
+        is_bnb: number;
         add_liquidity_transaction_hash: string | null;
       }>
     >(
@@ -571,7 +571,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
 			"presale_amount",
 			"energyfi_token_fee_percent",
 			"listing_rate_percent",
-			"is_glmr"
+			"is_bnb"
 		FROM "ilos"`,
     );
     const ilos: Array<IIlo> = await Promise.allSettled(
@@ -600,7 +600,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           presale_amount,
           energyfi_token_fee_percent,
           listing_rate_percent,
-          is_glmr,
+          is_bnb,
           add_liquidity_transaction_hash,
         } = result;
         const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
@@ -676,7 +676,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           energyfiTokenFeePercent: Number(energyfi_token_fee_percent),
           saleTokenTotalSupply: saleTokenTotalSupply.toString(),
           listingRatePercent: Number(listing_rate_percent),
-          isGlmr: !!is_glmr,
+          is_Bnb: !!is_bnb,
           lpGenerationTimestamp: lpGenerationTimestamp.toString(),
           addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
         };
@@ -921,7 +921,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       token_fee_address: results.token_fee_address,
       referral_fee_address: results.referral_fee_address,
       listing_rate_percent: results.listing_rate_percent,
-      is_glmr: results.is_glmr,
+      is_bnb: results.is_bnb,
       add_liquidity_transaction_hash: results.add_liquidity_transaction_hash,
       referral: [],
     };
@@ -1023,7 +1023,7 @@ routes.get('/get-all-referral', async (req: Request, res: Response) => {
             token_fee_address: result[i].token_fee_address,
             referral_fee_address: result[i].referral_fee_address,
             listing_rate_percent: result[i].listing_rate_percent,
-            is_glmr: result[i].is_glmr,
+            is_bnb: result[i].is_bnb,
             add_liquidity_transaction_hash: result[i].add_liquidity_transaction_hash,
             referral: [],
           });

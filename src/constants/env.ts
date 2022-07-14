@@ -9,7 +9,7 @@ type IEnvProperties =
   | 'LAUNCHPAD_SETTINGS_ADDRESS'
   | 'EARLY_ACCESS_TOKEN_ADDRESS'
   | 'EARLY_ACCESS_TOKEN_AMOUNT'
-  | 'WGLMR_ADDRESS';
+  | 'WBNB_ADDRESS';
 
 const exitWithErrorMessage = (errorMessage: string) => {
   console.error(errorMessage);
@@ -56,4 +56,4 @@ export const IMAGES_PATH = getEnvString('IMAGES_PATH');
 export const LAUNCHPAD_SETTINGS_ADDRESS = getEnvString('LAUNCHPAD_SETTINGS_ADDRESS');
 export const EARLY_ACCESS_TOKEN_ADDRESS = getEnvString('EARLY_ACCESS_TOKEN_ADDRESS');
 export const EARLY_ACCESS_TOKEN_AMOUNT = getEnvBigNumber('EARLY_ACCESS_TOKEN_AMOUNT');
-export const WGLMR_ADDRESS = getEnvString('WGLMR_ADDRESS');
+export const WBNB_ADDRESS = getEnvString('WBNB_ADDRESS');

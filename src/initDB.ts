@@ -42,7 +42,7 @@ const initDB = async () => {
 				"token_fee_address" TEXT NOT NULL,
 				"referral_fee_address" TEXT NOT NULL,
 				"listing_rate_percent" TEXT NOT NULL,
-				"is_glmr" INTEGER NOT NULL,
+				"is_bnb" INTEGER NOT NULL,
 				"add_liquidity_transaction_hash" TEXT,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);`,
