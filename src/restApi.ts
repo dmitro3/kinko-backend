@@ -27,9 +27,7 @@ interface CreateIloRequestBody {
 }
 
 interface CreateIloReferallRequest {
-  referralId: string;
-  userId: string;
-  iloId?: number;
+  launchpadAddress: string;
   referralAddress: string;
   referralSign: string;
 }
@@ -783,23 +781,23 @@ routes.post('/add_liquidity_transaction', async (req: Request, res: Response) =>
 });
 
 routes.post('/create-referral', async (req: Request, res: Response) => {
-  const {referralId, iloId, userId, referralAddress, referralSign}: CreateIloReferallRequest = req.body;
-  if (typeof iloId !== 'number') {
-    throw new Error('iloId is invalid');
+  const {launchpadAddress, referralAddress, referralSign}: CreateIloReferallRequest = req.body;
+  if (typeof launchpadAddress !== 'string') {
+    throw new Error('Launchpad Address is invalid');
   }
-  if (typeof referralId !== 'string') {
-    throw new Error('referralId is invalid');
-  }
-  if (typeof userId !== 'string') {
-    throw new Error('userId is invalid');
-  }
+  // if (typeof referralId !== 'string') {
+  //   throw new Error('referralId is invalid');
+  // }
+  // if (typeof userId !== 'string') {
+  //   throw new Error('userId is invalid');
+  // }
   if (typeof referralAddress !== 'string') {
     throw new Error('referralAddress is invalid');
   }
   if (typeof referralSign !== 'string') {
     throw new Error('referralSign is invalid');
   }
-
+  const referralId = `r-${Math.floor(Math.random() * 999999 + 1)}`;
   const db = await openDb();
   try {
     let ilosData = [];
@@ -807,9 +805,9 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     let stmt = await db.prepare(`
     SELECT i.*
     FROM ilos i
-    WHERE i.id = $ilo_id`);
+    WHERE i.launchpad_address = $launchpadAddress`);
     try {
-      await stmt.bind({$ilo_id: iloId});
+      await stmt.bind({$launchpadAddress: launchpadAddress});
       const result = await stmt.get();
       if (!result) {
         throw new Error('Ilo id is invalid!');
@@ -822,9 +820,9 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 			SELECT ir.*
 			FROM ilos i
       INNER JOIN ilos_referral ir ON ir.ilos_id = i.id
-			WHERE i.id = $ilo_id and ir.status = true order by ir.id ASC`);
+			WHERE i.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`);
     try {
-      await stmt.bind({$ilo_id: iloId});
+      await stmt.bind({$launchpadAddress: launchpadAddress});
       ilosData = await stmt.all();
     } finally {
       await stmt.finalize();
@@ -846,8 +844,6 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
       VALUES ($ilos_id,$user_id,$referral_id,$referral_address,$referral_sign);`);
     try {
       await stmt.bind({
-        $ilos_id: iloId,
-        $user_id: userId,
         $referral_id: referralId,
         $referral_address: referralAddress,
         $referral_sign: referralSign,
@@ -857,7 +853,19 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
 
-    return res.json({msg: 'Referral added successfully'});
+    stmt = await db.prepare(
+      `SELECT ir.* FROM ilos_referral ir WHERE ir.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`,
+    );
+    try {
+      await stmt.bind({$launchpadAddress: launchpadAddress});
+      ilosData = await stmt.all();
+    } finally {
+      await stmt.finalize();
+    }
+
+    const link = {frontend: `ilo/${referralAddress}/${referralId}`, backend: `api/v1/get-referral-by-id`};
+
+    return res.json({link, result: ilosData});
   } finally {
     await db.close();
   }
@@ -974,7 +982,6 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
 });
 
 routes.get('/get-all-referral', async (req: Request, res: Response) => {
-  const {iloId}: CreateIloReferallRequest = req.body;
   const db = await openDb();
   try {
     const ilosData: GetIlosData[] = [];

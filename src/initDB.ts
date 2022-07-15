@@ -49,15 +49,12 @@ const initDB = async () => {
       );
       await db.exec(
         `CREATE TABLE "ilos_referral" (
-				"id" INTEGER NOT NULL UNIQUE,
-				"ilos_id" INTEGER NULL,
-				"user_id" TEXT NOT NULL,
+				"id" INTEGER NOT NULL UNIQUE
 				"referral_address" TEXT NOT NULL,
 				"referral_sign" TEXT NOT NULL,
 				"referral_id" TEXT NULL,
 				"status" BOOLEAN DEFAULT true,
-				PRIMARY KEY("id" AUTOINCREMENT),
-				FOREIGN KEY (ilos_id) REFERENCES ilos (id)
+				PRIMARY KEY("id" AUTOINCREMENT)
       		);`,
       );
     } finally {
