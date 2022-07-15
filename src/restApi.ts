@@ -1,6 +1,10 @@
 import BigNumber from 'bignumber.js';
 import {getCachedLaunchpadInfo, getCachedLaunchpadStatus} from 'cache';
+<<<<<<< HEAD
 import {EARLY_ACCESS_TOKEN_ADDRESS, EARLY_ACCESS_TOKEN_AMOUNT, WGLMR_ADDRESS} from 'constants/env';
+=======
+import {EARLY_ACCESS_TOKEN_ADDRESS, EARLY_ACCESS_TOKEN_AMOUNT, WBNB_ADDRESS} from 'constants/env';
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 import {openDb} from 'db';
 import {bufferToHex, ecrecover, hashPersonalMessage, pubToAddress} from 'ethereumjs-util';
 import {Request, Response} from 'express';
@@ -27,9 +31,13 @@ interface CreateIloRequestBody {
 }
 
 interface CreateIloReferallRequest {
+<<<<<<< HEAD
   referralId: string;
   userId: string;
   iloId?: number;
+=======
+  launchpadAddress: string;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   referralAddress: string;
   referralSign: string;
 }
@@ -38,6 +46,12 @@ interface IloReferallRequest {
   id: number;
   user_id: string;
   referral_id?: string;
+<<<<<<< HEAD
+=======
+  referral_address: string;
+  referral_sign: string;
+  status: boolean;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 }
 
 interface GetIlosData {
@@ -72,7 +86,11 @@ interface GetIlosData {
   token_fee_address: string;
   referral_fee_address: string;
   listing_rate_percent: string;
+<<<<<<< HEAD
   is_glmr: string;
+=======
+  is_bnb: string;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   add_liquidity_transaction_hash: string;
   referral: IloDataReferallRequest[];
 }
@@ -179,7 +197,11 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     lockPeriod,
     startBlockDate,
     endBlockDate,
+<<<<<<< HEAD
     isGLMR,
+=======
+    is_BNB,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   } = launchpadInfo;
 
   const launchpadFeeInfo = await rpc.getLaunchpadFeeInfo(launchpadAddress);
@@ -214,9 +236,15 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     const baseTokenSymbol = await rpc.getERC20Symbol(launchpadInfo.bToken);
 
     const adaptedBaseTokenName =
+<<<<<<< HEAD
       launchpadInfo.bToken.toLowerCase() === WGLMR_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenName;
     const adaptedBaseTokenSymbol =
       launchpadInfo.bToken.toLowerCase() === WGLMR_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenSymbol;
+=======
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenName;
+    const adaptedBaseTokenSymbol =
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenSymbol;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 
     stmt = await db.prepare(`
 			INSERT INTO "ilos" (
@@ -250,7 +278,11 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				"token_fee_address",
 				"referral_fee_address",
 				"listing_rate_percent",
+<<<<<<< HEAD
 				"is_glmr"
+=======
+				"is_bnb"
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 			) VALUES (
 				$ilo_name,
 				$creator_address,
@@ -282,7 +314,11 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				$token_fee_address,
 				$referral_fee_address,
 				$listing_rate_percent,
+<<<<<<< HEAD
 				$is_glmr
+=======
+				$is_bnb
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 			);`);
     try {
       await stmt.bind({
@@ -316,7 +352,11 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
         $token_fee_address: tokenFeeAddress,
         $referral_fee_address: referralFeeAddress,
         $listing_rate_percent: listingRatePercent.toString(),
+<<<<<<< HEAD
         $is_glmr: isGLMR ? 1 : 0,
+=======
+        $is_bnb: is_BNB ? 1 : 0,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       });
       await stmt.run();
     } finally {
@@ -362,7 +402,11 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
 				"presale_amount",
 				"energyfi_token_fee_percent",
 				"listing_rate_percent",
+<<<<<<< HEAD
 				"is_glmr",
+=======
+				"is_bnb",
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 				"add_liquidity_transaction_hash"
 			FROM "ilos"
 			WHERE LOWER("launchpad_address") = LOWER($launchpad_address)`);
@@ -392,7 +436,11 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         presale_amount: string;
         energyfi_token_fee_percent: string;
         listing_rate_percent: string;
+<<<<<<< HEAD
         is_glmr: number;
+=======
+        is_bnb: number;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         add_liquidity_transaction_hash: string | null;
       }>();
       if (!result) {
@@ -422,7 +470,11 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         presale_amount,
         energyfi_token_fee_percent,
         listing_rate_percent,
+<<<<<<< HEAD
         is_glmr,
+=======
+        is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         add_liquidity_transaction_hash,
       } = result;
       const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
@@ -499,7 +551,11 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         energyfiTokenFeePercent: Number(energyfi_token_fee_percent),
         saleTokenTotalSupply: saleTokenTotalSupply.toString(),
         listingRatePercent: Number(listing_rate_percent),
+<<<<<<< HEAD
         isGlmr: !!is_glmr,
+=======
+        is_Bnb: !!is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         lpGenerationTimestamp: lpGenerationTimestamp.toString(),
         addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
       };
@@ -540,7 +596,11 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
         presale_amount: string;
         energyfi_token_fee_percent: string;
         listing_rate_percent: string;
+<<<<<<< HEAD
         is_glmr: number;
+=======
+        is_bnb: number;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         add_liquidity_transaction_hash: string | null;
       }>
     >(
@@ -568,7 +628,11 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
 			"presale_amount",
 			"energyfi_token_fee_percent",
 			"listing_rate_percent",
+<<<<<<< HEAD
 			"is_glmr"
+=======
+			"is_bnb"
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 		FROM "ilos"`,
     );
     const ilos: Array<IIlo> = await Promise.allSettled(
@@ -597,7 +661,11 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           presale_amount,
           energyfi_token_fee_percent,
           listing_rate_percent,
+<<<<<<< HEAD
           is_glmr,
+=======
+          is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
           add_liquidity_transaction_hash,
         } = result;
         const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
@@ -673,7 +741,11 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           energyfiTokenFeePercent: Number(energyfi_token_fee_percent),
           saleTokenTotalSupply: saleTokenTotalSupply.toString(),
           listingRatePercent: Number(listing_rate_percent),
+<<<<<<< HEAD
           isGlmr: !!is_glmr,
+=======
+          is_Bnb: !!is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
           lpGenerationTimestamp: lpGenerationTimestamp.toString(),
           addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
         };
@@ -780,6 +852,7 @@ routes.post('/add_liquidity_transaction', async (req: Request, res: Response) =>
 });
 
 routes.post('/create-referral', async (req: Request, res: Response) => {
+<<<<<<< HEAD
   const {referralId, iloId, userId, referralAddress, referralSign}: CreateIloReferallRequest = req.body;
   if (typeof iloId !== 'number') {
     throw new Error('iloId is invalid');
@@ -790,13 +863,29 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
   if (typeof userId !== 'string') {
     throw new Error('userId is invalid');
   }
+=======
+  const {launchpadAddress, referralAddress, referralSign}: CreateIloReferallRequest = req.body;
+  if (typeof launchpadAddress !== 'string') {
+    throw new Error('Launchpad Address is invalid');
+  }
+  // if (typeof referralId !== 'string') {
+  //   throw new Error('referralId is invalid');
+  // }
+  // if (typeof userId !== 'string') {
+  //   throw new Error('userId is invalid');
+  // }
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   if (typeof referralAddress !== 'string') {
     throw new Error('referralAddress is invalid');
   }
   if (typeof referralSign !== 'string') {
     throw new Error('referralSign is invalid');
   }
+<<<<<<< HEAD
 
+=======
+  const referralId = `r-${Math.floor(Math.random() * 999999 + 1)}`;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   const db = await openDb();
   try {
     let ilosData = [];
@@ -804,9 +893,15 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     let stmt = await db.prepare(`
     SELECT i.*
     FROM ilos i
+<<<<<<< HEAD
     WHERE i.id = $ilo_id`);
     try {
       await stmt.bind({$ilo_id: iloId});
+=======
+    WHERE i.launchpad_address = $launchpadAddress`);
+    try {
+      await stmt.bind({$launchpadAddress: launchpadAddress});
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       const result = await stmt.get();
       if (!result) {
         throw new Error('Ilo id is invalid!');
@@ -819,9 +914,15 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 			SELECT ir.*
 			FROM ilos i
       INNER JOIN ilos_referral ir ON ir.ilos_id = i.id
+<<<<<<< HEAD
 			WHERE i.id = $ilo_id and ir.status = true order by ir.id ASC`);
     try {
       await stmt.bind({$ilo_id: iloId});
+=======
+			WHERE i.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`);
+    try {
+      await stmt.bind({$launchpadAddress: launchpadAddress});
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       ilosData = await stmt.all();
     } finally {
       await stmt.finalize();
@@ -843,8 +944,11 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
       VALUES ($ilos_id,$user_id,$referral_id,$referral_address,$referral_sign);`);
     try {
       await stmt.bind({
+<<<<<<< HEAD
         $ilos_id: iloId,
         $user_id: userId,
+=======
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         $referral_id: referralId,
         $referral_address: referralAddress,
         $referral_sign: referralSign,
@@ -854,7 +958,23 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
 
+<<<<<<< HEAD
     return res.json({msg: 'Referral added successfully'});
+=======
+    stmt = await db.prepare(
+      `SELECT ir.* FROM ilos_referral ir WHERE ir.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`,
+    );
+    try {
+      await stmt.bind({$launchpadAddress: launchpadAddress});
+      ilosData = await stmt.all();
+    } finally {
+      await stmt.finalize();
+    }
+
+    const link = {frontend: `ilo/${referralAddress}/${referralId}`, backend: `api/v1/get-referral-by-id`};
+
+    return res.json({link, result: ilosData});
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   } finally {
     await db.close();
   }
@@ -918,7 +1038,11 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       token_fee_address: results.token_fee_address,
       referral_fee_address: results.referral_fee_address,
       listing_rate_percent: results.listing_rate_percent,
+<<<<<<< HEAD
       is_glmr: results.is_glmr,
+=======
+      is_bnb: results.is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       add_liquidity_transaction_hash: results.add_liquidity_transaction_hash,
       referral: [],
     };
@@ -927,6 +1051,12 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       id: results.id,
       user_id: results.user_id,
       referral_id: results.referral_id,
+<<<<<<< HEAD
+=======
+      referral_address: results.referral_address,
+      referral_sign: results.referral_sign,
+      status: results.status,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     };
     ilosData.referral.push(referral);
 
@@ -951,6 +1081,12 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
             id: result[i].id,
             user_id: result[i].user_id,
             referral_id: result[i].referral_id,
+<<<<<<< HEAD
+=======
+            referral_address: result[i].referral_address,
+            referral_sign: result[i].referral_sign,
+            status: result[i].status,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
           };
           ilosData.referral.push(referral);
         }
@@ -965,7 +1101,10 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
 });
 
 routes.get('/get-all-referral', async (req: Request, res: Response) => {
+<<<<<<< HEAD
   const {iloId}: CreateIloReferallRequest = req.body;
+=======
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   const db = await openDb();
   try {
     const ilosData: GetIlosData[] = [];
@@ -1014,7 +1153,11 @@ routes.get('/get-all-referral', async (req: Request, res: Response) => {
             token_fee_address: result[i].token_fee_address,
             referral_fee_address: result[i].referral_fee_address,
             listing_rate_percent: result[i].listing_rate_percent,
+<<<<<<< HEAD
             is_glmr: result[i].is_glmr,
+=======
+            is_bnb: result[i].is_bnb,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
             add_liquidity_transaction_hash: result[i].add_liquidity_transaction_hash,
             referral: [],
           });
@@ -1025,6 +1168,12 @@ routes.get('/get-all-referral', async (req: Request, res: Response) => {
           id: result[i].id,
           user_id: result[i].user_id,
           referral_id: result[i].referral_id,
+<<<<<<< HEAD
+=======
+          referral_address: result[i].referral_address,
+          referral_sign: result[i].referral_sign,
+          status: result[i].status,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
         };
         ilosData[ilosData.length - 1].referral.push(referral);
       }

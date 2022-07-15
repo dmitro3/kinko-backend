@@ -1,8 +1,14 @@
 import BigNumber from 'bignumber.js';
 import {ETHEREUM_RPC_URL, LAUNCHPAD_SETTINGS_ADDRESS} from 'constants/env';
+<<<<<<< HEAD
 import erc20Abi from 'constants/erc20Abi.json';
 import launchpadAbi from 'constants/launchpadAbi.json';
 import launchpadSettingsAbi from 'constants/launchpadSettingsAbi.json';
+=======
+import erc20Abi from 'constants/ERC20.json';
+import launchpadAbi from 'constants/Launchpad.json';
+import launchpadSettingsAbi from 'constants/LaunchpadSettings.json';
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 import {ILaunchpadFeeInfo, ILaunchpadInfo, ILaunchpadStatus} from 'types';
 import {logError, sleep} from 'utils';
 import Web3 from 'web3';
@@ -24,7 +30,11 @@ interface ILaunchpadInfoResponse {
   lockPeriod: string;
   startTime: string;
   endTime: string;
+<<<<<<< HEAD
   isGLMR: boolean;
+=======
+  is_BNB: boolean;
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 }
 
 interface ILaunchpadFeeInfoResponse {
@@ -124,7 +134,11 @@ class Rpc {
     });
 
   getERC20Decimals = async (tokenAddress: string): Promise<BigNumber> => {
+<<<<<<< HEAD
     const token = new this.web3.eth.Contract(erc20Abi as Array<AbiItem>, tokenAddress);
+=======
+    const token = new this.web3.eth.Contract(erc20Abi.abi as Array<AbiItem>, tokenAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     return this.call(async () => {
       const decimals: string = await token.methods.decimals().call();
       return new BigNumber(decimals);
@@ -132,17 +146,29 @@ class Rpc {
   };
 
   getERC20Name = async (tokenAddress: string): Promise<string> => {
+<<<<<<< HEAD
     const token = new this.web3.eth.Contract(erc20Abi as Array<AbiItem>, tokenAddress);
+=======
+    const token = new this.web3.eth.Contract(erc20Abi.abi as Array<AbiItem>, tokenAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     return this.call(async () => token.methods.name().call(), 'getERC20Name()');
   };
 
   getERC20Symbol = async (tokenAddress: string): Promise<string> => {
+<<<<<<< HEAD
     const token = new this.web3.eth.Contract(erc20Abi as Array<AbiItem>, tokenAddress);
+=======
+    const token = new this.web3.eth.Contract(erc20Abi.abi as Array<AbiItem>, tokenAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     return this.call(async () => token.methods.symbol().call(), 'getERC20Symbol()');
   };
 
   getERC20TotalSupply = async (tokenAddress: string, decimals: BigNumber): Promise<BigNumber> => {
+<<<<<<< HEAD
     const token = new this.web3.eth.Contract(erc20Abi as Array<AbiItem>, tokenAddress);
+=======
+    const token = new this.web3.eth.Contract(erc20Abi.abi as Array<AbiItem>, tokenAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     return this.call(async () => {
       const totalSupply: string = await token.methods.totalSupply().call();
       return new BigNumber(totalSupply).div(new BigNumber(10).pow(decimals));
@@ -154,7 +180,11 @@ class Rpc {
     saleTokenDecimals: BigNumber | null,
     baseTokenDecimals: BigNumber | null,
   ): Promise<ILaunchpadInfo> => {
+<<<<<<< HEAD
     const launchpad = new this.web3.eth.Contract(launchpadAbi as Array<AbiItem>, launchpadAddress);
+=======
+    const launchpad = new this.web3.eth.Contract(launchpadAbi.abi as Array<AbiItem>, launchpadAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     const launchpadInfoResponse = await this.call<ILaunchpadInfoResponse>(
       () => launchpad.methods.launchpadInfo().call(),
       'getLaunchpadInfo()',
@@ -173,7 +203,11 @@ class Rpc {
       lockPeriod,
       startTime,
       endTime,
+<<<<<<< HEAD
       isGLMR,
+=======
+      is_BNB,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     } = launchpadInfoResponse;
     if (!saleTokenDecimals) {
       // eslint-disable-next-line no-param-reassign
@@ -197,12 +231,20 @@ class Rpc {
       lockPeriod: BigInt(lockPeriod),
       startBlockDate: new Date(Number(startTime) * 1000),
       endBlockDate: new Date(Number(endTime) * 1000),
+<<<<<<< HEAD
       isGLMR,
+=======
+      is_BNB,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     };
   };
 
   getLaunchpadFeeInfo = async (launchpadAddress: string): Promise<ILaunchpadFeeInfo> => {
+<<<<<<< HEAD
     const launchpad = new this.web3.eth.Contract(launchpadAbi as Array<AbiItem>, launchpadAddress);
+=======
+    const launchpad = new this.web3.eth.Contract(launchpadAbi.abi as Array<AbiItem>, launchpadAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     const launchpadFeeInfoResponse = await this.call<ILaunchpadFeeInfoResponse>(
       () => launchpad.methods.launchpadFeeInfo().call(),
       'getLaunchpadFeeInfo()',
@@ -223,7 +265,11 @@ class Rpc {
     saleTokenDecimals: BigNumber,
     baseTokenDecimals: BigNumber,
   ): Promise<ILaunchpadStatus> => {
+<<<<<<< HEAD
     const launchpad = new this.web3.eth.Contract(launchpadAbi as Array<AbiItem>, launchpadAddress);
+=======
+    const launchpad = new this.web3.eth.Contract(launchpadAbi.abi as Array<AbiItem>, launchpadAddress);
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
     const launchpadStatusResponse = await this.call<ILaunchpadStatusResponse>(
       () => launchpad.methods.launchpadStatus().call(),
       'getLaunchpadStatus()',
@@ -278,7 +324,11 @@ class Rpc {
 
   getEarlyAccessToken = async (): Promise<{earlyAccessTokenAddress: string; earlyAccessTokenAmount: BigNumber}> => {
     const launchpadSettings = new this.web3.eth.Contract(
+<<<<<<< HEAD
       launchpadSettingsAbi as Array<AbiItem>,
+=======
+      launchpadSettingsAbi.abi as Array<AbiItem>,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       LAUNCHPAD_SETTINGS_ADDRESS,
     );
     const earlyAccessTokensLength = await this.getEarlyAccessTokensLength(launchpadSettings);

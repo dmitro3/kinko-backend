@@ -42,22 +42,34 @@ const initDB = async () => {
 				"token_fee_address" TEXT NOT NULL,
 				"referral_fee_address" TEXT NOT NULL,
 				"listing_rate_percent" TEXT NOT NULL,
+<<<<<<< HEAD
 				"is_glmr" INTEGER NOT NULL,
+=======
+				"is_bnb" INTEGER NOT NULL,
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 				"add_liquidity_transaction_hash" TEXT,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);`,
       );
       await db.exec(
         `CREATE TABLE "ilos_referral" (
+<<<<<<< HEAD
 				"id" INTEGER NOT NULL UNIQUE,
 				"ilos_id" INTEGER NULL,
 				"user_id" TEXT NOT NULL,
+=======
+				"id" INTEGER NOT NULL UNIQUE
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 				"referral_address" TEXT NOT NULL,
 				"referral_sign" TEXT NOT NULL,
 				"referral_id" TEXT NULL,
 				"status" BOOLEAN DEFAULT true,
+<<<<<<< HEAD
 				PRIMARY KEY("id" AUTOINCREMENT),
 				FOREIGN KEY (ilos_id) REFERENCES ilos (id)
+=======
+				PRIMARY KEY("id" AUTOINCREMENT)
+>>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
       		);`,
       );
     } finally {
