@@ -49,7 +49,7 @@ const initDB = async () => {
       );
       await db.exec(
         `CREATE TABLE "ilos_referral" (
-				"id" INTEGER NOT NULL UNIQUE
+				"id" INTEGER NOT NULL UNIQUE,
 				"referral_address" TEXT NOT NULL,
 				"referral_sign" TEXT NOT NULL,
 				"referral_id" TEXT NULL,
