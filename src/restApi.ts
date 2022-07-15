@@ -30,6 +30,7 @@ interface CreateIloReferallRequest {
   launchpadAddress: string;
   referralAddress: string;
   referralSign: string;
+  referralId: string;
 }
 
 interface IloReferallRequest {
@@ -875,9 +876,9 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 });
 
 routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
-  const {referralAddress}: CreateIloReferallRequest = req.body;
-  if (typeof referralAddress !== 'string') {
-    throw new Error('referralAddress is invalid');
+  const {referralId}: CreateIloReferallRequest = req.body;
+  if (typeof referralId !== 'string') {
+    throw new Error('referralId is invalid');
   }
 
   const db = await openDb();
@@ -888,10 +889,10 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
     SELECT *, i.id as ilosId
 			FROM ilos_referral ir
       INNER JOIN ilos i ON ir.ilos_id = i.id
-      WHERE ir.referral_address = $referralAddress  
+      WHERE ir.referral_id = $referralId  
 		order by ir.id ASC`);
     try {
-      await stmt.bind({$referralAddress: referralAddress});
+      await stmt.bind({$referralId: referralId});
       results = await stmt.get();
       if (!results) {
         throw new Error('referralSign not found');
@@ -952,14 +953,14 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       stmt = await db.prepare(`
     select * from (SELECT *, i.id as ilosId
 			FROM ilos_referral ir
-      LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_address = $referralAddress 
+      LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_id = $referralId 
 		order by ir.id ASC) as tmp where status = true`);
       try {
-        await stmt.bind({$referralAddress: referralAddress});
+        await stmt.bind({$referralId: referralId});
         const result = await stmt.all();
 
         if (result.length === 0) {
-          throw new Error('referralAddress not found');
+          throw new Error('referralId not found');
         }
         ilosData.referral = [];
         const iloLength = result.length;
