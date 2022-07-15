@@ -56,8 +56,4 @@ export const IMAGES_PATH = getEnvString('IMAGES_PATH');
 export const LAUNCHPAD_SETTINGS_ADDRESS = getEnvString('LAUNCHPAD_SETTINGS_ADDRESS');
 export const EARLY_ACCESS_TOKEN_ADDRESS = getEnvString('EARLY_ACCESS_TOKEN_ADDRESS');
 export const EARLY_ACCESS_TOKEN_AMOUNT = getEnvBigNumber('EARLY_ACCESS_TOKEN_AMOUNT');
-<<<<<<< HEAD
-export const WGLMR_ADDRESS = getEnvString('WGLMR_ADDRESS');
-=======
 export const WBNB_ADDRESS = getEnvString('WBNB_ADDRESS');
->>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a

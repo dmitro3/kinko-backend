@@ -14,11 +14,7 @@ export interface ILaunchpadInfo {
   lockPeriod: bigint;
   startBlockDate: Date;
   endBlockDate: Date;
-<<<<<<< HEAD
-  isGLMR: boolean;
-=======
   is_BNB: boolean;
->>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
 }
 
 export interface ILaunchpadFeeInfo {
@@ -86,10 +82,6 @@ export interface IIlo {
   energyfiTokenFeePercent: number;
   saleTokenTotalSupply: string;
   listingRatePercent: number;
-<<<<<<< HEAD
-  isGlmr: boolean;
-=======
   is_Bnb: boolean;
->>>>>>> a131d401ae03cb1fc7023f86de394f2895aab30a
   addLiquidityTransactionHash: string;
 }
