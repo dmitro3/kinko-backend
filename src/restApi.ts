@@ -841,10 +841,11 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 
     /** Insert ilos referral data */
     stmt = await db.prepare(`
-    	INSERT INTO "ilos_referral" ("referral_id", "referral_address", "referral_sign") 
-      VALUES ($referral_id,$referral_address,$referral_sign);`);
+    	INSERT INTO "ilos_referral" ("ilos_id", "referral_id", "referral_address", "referral_sign") 
+      VALUES ($ilosId,$referral_id,$referral_address,$referral_sign);`);
     try {
       await stmt.bind({
+        $ilosId: ilosData[0].id,
         $referral_id: referralId,
         $referral_address: referralAddress,
         $referral_sign: referralSign,
