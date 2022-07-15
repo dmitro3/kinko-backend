@@ -840,8 +840,8 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 
     /** Insert ilos referral data */
     stmt = await db.prepare(`
-    	INSERT INTO "ilos_referral" ("ilos_id","user_id","referral_id", "referral_address", "referral_sign") 
-      VALUES ($ilos_id,$user_id,$referral_id,$referral_address,$referral_sign);`);
+    	INSERT INTO "ilos_referral" ("referral_id", "referral_address", "referral_sign") 
+      VALUES ($referral_id,$referral_address,$referral_sign);`);
     try {
       await stmt.bind({
         $referral_id: referralId,
@@ -854,10 +854,13 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     }
 
     stmt = await db.prepare(
-      `SELECT ir.* FROM ilos_referral ir WHERE ir.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`,
+      `select * from (SELECT *, i.id as ilosId
+        FROM ilos_referral ir
+        LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_address = $referralAddress 
+      order by ir.id ASC) as tmp where status = true`,
     );
     try {
-      await stmt.bind({$launchpadAddress: launchpadAddress});
+      await stmt.bind({$referralAddress: referralAddress});
       ilosData = await stmt.all();
     } finally {
       await stmt.finalize();
@@ -872,9 +875,9 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 });
 
 routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
-  const {referralSign}: CreateIloReferallRequest = req.body;
-  if (typeof referralSign !== 'string') {
-    throw new Error('referralSign is invalid');
+  const {referralAddress}: CreateIloReferallRequest = req.body;
+  if (typeof referralAddress !== 'string') {
+    throw new Error('referralAddress is invalid');
   }
 
   const db = await openDb();
@@ -885,10 +888,10 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
     SELECT *, i.id as ilosId
 			FROM ilos_referral ir
       INNER JOIN ilos i ON ir.ilos_id = i.id
-      WHERE ir.referral_sign = $referral_sign  
+      WHERE ir.referral_address = $referralAddress  
 		order by ir.id ASC`);
     try {
-      await stmt.bind({$referral_sign: referralSign});
+      await stmt.bind({$referralAddress: referralAddress});
       results = await stmt.get();
       if (!results) {
         throw new Error('referralSign not found');
@@ -949,14 +952,14 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       stmt = await db.prepare(`
     select * from (SELECT *, i.id as ilosId
 			FROM ilos_referral ir
-      LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_sign = $referral_sign 
+      LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_address = $referralAddress 
 		order by ir.id ASC) as tmp where status = true`);
       try {
-        await stmt.bind({$referral_sign: referralSign});
+        await stmt.bind({$referralAddress: referralAddress});
         const result = await stmt.all();
 
         if (result.length === 0) {
-          throw new Error('referralSign not found');
+          throw new Error('referralAddress not found');
         }
         ilosData.referral = [];
         const iloLength = result.length;
