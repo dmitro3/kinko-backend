@@ -159,7 +159,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
   const signAddress = bufferToHex(
     pubToAddress(
       ecrecover(
-        hashPersonalMessage(Buffer.from('energyfi')),
+        hashPersonalMessage(Buffer.from('kinko')),
         Buffer.from(v, 'hex'),
         Buffer.from(r, 'hex'),
         Buffer.from(s, 'hex'),
