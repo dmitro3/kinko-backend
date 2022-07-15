@@ -11,6 +11,7 @@ import {Contract} from 'web3-eth-contract/types';
 import {AbiItem} from 'web3-utils/types';
 
 interface ILaunchpadInfoResponse {
+  _launchpadTimePeriod: [any, any, any];
   launchpadOwner: string;
   sToken: string;
   bToken: string;
@@ -159,6 +160,7 @@ class Rpc {
       () => launchpad.methods.launchpadInfo().call(),
       'getLaunchpadInfo()',
     );
+    const [lockPeriod, startTime, endTime] = launchpadInfoResponse._launchpadTimePeriod;
     const {
       launchpadOwner,
       sToken,
@@ -170,9 +172,6 @@ class Rpc {
       hardcap,
       liquidityPercentage,
       listingRate,
-      lockPeriod,
-      startTime,
-      endTime,
       is_BNB,
     } = launchpadInfoResponse;
     if (!saleTokenDecimals) {
