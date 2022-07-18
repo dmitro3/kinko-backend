@@ -216,9 +216,9 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     const baseTokenSymbol = await rpc.getERC20Symbol(launchpadInfo.bToken);
 
     const adaptedBaseTokenName =
-      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenName;
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'BNB' : baseTokenName;
     const adaptedBaseTokenSymbol =
-      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'GLMR' : baseTokenSymbol;
+      launchpadInfo.bToken.toLowerCase() === WBNB_ADDRESS.toLowerCase() ? 'BNB' : baseTokenSymbol;
 
     stmt = await db.prepare(`
 			INSERT INTO "ilos" (
