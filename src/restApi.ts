@@ -803,6 +803,7 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
   try {
     let ilosData = [];
     let ilos: any = {};
+    let response: any = {};
     /** Check if ilo id is exist or not */
     let stmt = await db.prepare(`
     SELECT i.*
@@ -841,7 +842,6 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     }
 
     /** Insert ilos referral data */
-    console.log(ilosData);
     stmt = await db.prepare(`
     	INSERT INTO "ilos_referral" ("ilos_id", "referral_id", "referral_address", "referral_sign") 
       VALUES ($ilosId,$referral_id,$referral_address,$referral_sign);`);
@@ -865,14 +865,27 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     );
     try {
       await stmt.bind({$referralAddress: referralAddress});
-      ilosData = await stmt.all();
+      const result = await stmt.all();
+      response = result[0];
+      response.referral = [];
+      const iloLength = result.length;
+      for (let i = 0; i < iloLength; i += 1) {
+        const referral: IloReferallRequest = {
+          id: result[i].id,
+          user_id: result[i].user_id,
+          referral_id: result[i].referral_id,
+          referral_address: result[i].referral_address,
+          referral_sign: result[i].referral_sign,
+          status: result[i].status,
+        };
+        response.referral.push(referral);
+      }
     } finally {
       await stmt.finalize();
     }
 
     const link = {frontend: `ilo/${referralAddress}/${referralId}`, backend: `api/v1/get-referral-by-id`};
-
-    return res.json({link, result: ilosData});
+    return res.json({link, result: response});
   } finally {
     await db.close();
   }
