@@ -884,7 +884,7 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
 
-    const link = {frontend: `ilo/${referralAddress}/${referralId}`, backend: `api/v1/get-referral-by-id`};
+    const link = {frontend: `ilo/${launchpadAddress}/${referralId}`, backend: `api/v1/get-referral-by-id`};
     return res.json({link, result: response});
   } finally {
     await db.close();
