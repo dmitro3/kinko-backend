@@ -911,7 +911,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       await stmt.bind({$referralId: referralId});
       results = await stmt.get();
       if (!results) {
-        throw new Error('referralSign not found');
+        throw new Error('referralId not found');
       }
     } finally {
       await stmt.finalize();

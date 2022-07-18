@@ -14,7 +14,18 @@ const main = async () => {
   const app = express();
   app.use(morgan('tiny'));
   app.use(helmet());
-  app.use(cors({origin:'*'})); // for adding cors headers
+
+  const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://cosmic-mousse-dc75c6.netlify.app'];
+  const corsOptions = {
+    origin: function (origin: any, callback: any) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  };
+  app.use(cors(corsOptions)); // for adding cors headers
   app.use(express.json({limit: '10mb'})); // for parsing application/json
   app.use(express.urlencoded({extended: true, limit: '10mb'})); // for parsing application/x-www-form-urlencoded
   app.use('/api/v1', routes);
@@ -24,7 +35,7 @@ const main = async () => {
   app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
     logError(req.path, error);
     const message = errorToString(error);
-    console.log("connected")
+    console.log('connected');
     return res.status(400).send({message});
   });
 
