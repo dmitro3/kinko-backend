@@ -823,16 +823,16 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
 			SELECT ir.*
 			FROM ilos i
       INNER JOIN ilos_referral ir ON ir.ilos_id = i.id
-			WHERE i.launchpad_address = $launchpadAddress and ir.status = true order by ir.id ASC`);
+			WHERE i.launchpad_address = $launchpadAddress and referral_address = $referralAddress and ir.status = true order by ir.id ASC`);
     try {
-      await stmt.bind({$launchpadAddress: launchpadAddress});
+      await stmt.bind({$launchpadAddress: launchpadAddress, $referralAddress: referralAddress});
       ilosData = await stmt.all();
     } finally {
       await stmt.finalize();
     }
 
     /** delete referal first row when data is more than or equal 3*/
-    if (ilosData.length >= 3) {
+    if (ilosData.length >= 1) {
       stmt = await db.prepare(`update ilos_referral set status = false where id = ${ilosData[0].id}`);
       try {
         await stmt.run();
