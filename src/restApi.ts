@@ -917,40 +917,110 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
 
-    ilosData = {
-      id: results.ilosId,
-      ilo_name: results.ilo_name,
-      creator_address: results.creator_address,
-      launchpad_address: results.launchpad_address,
-      sale_token_address: results.sale_token_address,
-      sale_token_name: results.sale_token_name,
-      sale_token_symbol: results.sale_token_symbol,
-      base_token_address: results.base_token_address,
-      base_token_name: results.base_token_name,
-      base_token_symbol: results.base_token_symbol,
-      hardcap: results.hardcap,
-      softcap: results.softcap,
-      start_block_date: results.start_block_date,
-      end_block_date: results.end_block_date,
-      logo_file_name: results.logo_file_name,
-      header_image_file_name: results.header_image_file_name,
-      telegram_url: results.telegram_url,
-      twitter_url: results.twitter_url,
-      website_url: results.website_url,
-      whitepaper_url: results.whitepaper_url,
-      description: results.description,
-      liquidity_rate_percent: results.liquidity_rate_percent,
-      lock_period: results.lock_period,
-      max_spend_per_buyer: results.max_spend_per_buyer,
-      presale_amount: results.presale_amount,
-      energyfi_token_fee_percent: results.energyfi_token_fee_percent,
-      referral_fee_percent: results.referral_fee_percent,
-      base_fee_address: results.base_fee_address,
-      token_fee_address: results.token_fee_address,
-      referral_fee_address: results.referral_fee_address,
-      listing_rate_percent: results.listing_rate_percent,
-      is_bnb: results.is_bnb,
-      add_liquidity_transaction_hash: results.add_liquidity_transaction_hash,
+    const {
+      ilo_name,
+      creator_address,
+      launchpad_address,
+      sale_token_address,
+      sale_token_name,
+      sale_token_symbol,
+      base_token_address,
+      base_token_name,
+      base_token_symbol,
+      hardcap,
+      softcap,
+      logo_file_name,
+      header_image_file_name,
+      telegram_url,
+      twitter_url,
+      website_url,
+      whitepaper_url,
+      description,
+      liquidity_rate_percent,
+      lock_period,
+      presale_amount,
+      energyfi_token_fee_percent,
+      listing_rate_percent,
+      is_bnb,
+      add_liquidity_transaction_hash,
+    } = results;
+    const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
+    const baseTokenDecimals = await rpc.getERC20Decimals(base_token_address);
+    const launchpadInfo = await getCachedLaunchpadInfo(launchpad_address, saleTokenDecimals, baseTokenDecimals);
+    const {startBlockDate, endBlockDate, maxSpendPerBuyer} = launchpadInfo;
+    const launchpadStatus = await rpc.getLaunchpadStatus(launchpad_address, saleTokenDecimals, baseTokenDecimals);
+    const {
+      forceFailed,
+      lpGenerationComplete,
+      whitelistOnly,
+      lpGenerationTimestamp,
+      totalBaseCollected,
+      totalBaseWithdrawn,
+      totalTokensSold,
+      totalTokensWithdrawn,
+      numBuyers,
+      round1Length,
+    } = launchpadStatus;
+
+    const iloStatus = await getIloStatus({
+      startBlockDate,
+      endBlockDate,
+      forceFailed,
+      totalBaseCollected,
+      hardcap: new BigNumber(hardcap),
+      softcap: new BigNumber(softcap),
+      round1Length,
+      lpGenerationComplete,
+    });
+
+    const saleTokenTotalSupply = await rpc.getERC20TotalSupply(sale_token_address, saleTokenDecimals);
+    const round1EndDate = new Date(
+      Math.min(startBlockDate.getTime() + Number(round1Length) * 1000, endBlockDate.getTime()),
+    );
+    const ilo: IIlo = {
+      iloName: ilo_name,
+      creatorAddress: creator_address,
+      launchpadAddress: launchpad_address,
+      saleTokenAddress: sale_token_address,
+      saleTokenName: sale_token_name,
+      saleTokenSymbol: sale_token_symbol,
+      baseTokenAddress: base_token_address,
+      baseTokenName: base_token_name,
+      baseTokenSymbol: base_token_symbol,
+      hardcap,
+      softcap,
+      startBlockDate: startBlockDate.toISOString(),
+      endBlockDate: endBlockDate.toISOString(),
+      logoFileName: logo_file_name,
+      headerImageFileName: header_image_file_name,
+      telegramURL: telegram_url,
+      twitterURL: twitter_url,
+      websiteURL: website_url,
+      whitepaperURL: whitepaper_url,
+      description,
+      forceFailed,
+      lpGenerationComplete,
+      whitelistOnly,
+      totalBaseCollected: totalBaseCollected.toString(),
+      totalBaseWithdrawn: totalBaseWithdrawn.toString(),
+      totalTokensSold: totalTokensSold.toString(),
+      totalTokensWithdrawn: totalTokensWithdrawn.toString(),
+      numBuyers: Number(numBuyers),
+      round1Length: Number(round1Length),
+      status: iloStatus,
+      earlyAccessTokenAddress: EARLY_ACCESS_TOKEN_ADDRESS,
+      earlyAccessTokenAmount: EARLY_ACCESS_TOKEN_AMOUNT.toString(),
+      liquidityRatePercent: Number(liquidity_rate_percent),
+      round1EndDate: round1EndDate.toISOString(),
+      lockPeriod: lock_period.toString(),
+      maxSpendPerBuyer: maxSpendPerBuyer.toString(),
+      presaleAmount: presale_amount,
+      energyfiTokenFeePercent: Number(energyfi_token_fee_percent),
+      saleTokenTotalSupply: saleTokenTotalSupply.toString(),
+      listingRatePercent: Number(listing_rate_percent),
+      is_Bnb: !!is_bnb,
+      lpGenerationTimestamp: lpGenerationTimestamp.toString(),
+      addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
       referral: [],
     };
 
@@ -962,7 +1032,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       referral_sign: results.referral_sign,
       status: results.status,
     };
-    ilosData.referral.push(referral);
+    ilo.referral.push(referral);
 
     /** get if ilo referal data */
     if (results.status) {
@@ -978,7 +1048,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
         if (result.length === 0) {
           throw new Error('referralId not found');
         }
-        ilosData.referral = [];
+        ilo.referral = [];
         const iloLength = result.length;
         for (let i = 0; i < iloLength; i += 1) {
           const referral: IloReferallRequest = {
@@ -989,13 +1059,13 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
             referral_sign: result[i].referral_sign,
             status: result[i].status,
           };
-          ilosData.referral.push(referral);
+          ilo.referral.push(referral);
         }
       } finally {
         await stmt.finalize();
       }
     }
-    return res.json({result: ilosData});
+    return res.json({result: ilo});
   } finally {
     await db.close();
   }

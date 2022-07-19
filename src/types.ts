@@ -84,4 +84,5 @@ export interface IIlo {
   listingRatePercent: number;
   is_Bnb: boolean;
   addLiquidityTransactionHash: string;
+  referral?: any;
 }
