@@ -85,4 +85,5 @@ export interface IIlo {
   is_Bnb: boolean;
   addLiquidityTransactionHash: string;
   referral?: any;
+  category?: string | null;
 }

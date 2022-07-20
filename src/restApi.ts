@@ -370,6 +370,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
 				"energyfi_token_fee_percent",
 				"listing_rate_percent",
 				"is_bnb",
+        "category",
 				"add_liquidity_transaction_hash"
 			FROM "ilos"
 			WHERE LOWER("launchpad_address") = LOWER($launchpad_address)`);
@@ -401,6 +402,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         listing_rate_percent: string;
         is_bnb: number;
         add_liquidity_transaction_hash: string | null;
+        category: string | null;
       }>();
       if (!result) {
         throw new Error('Ilo not found');
@@ -431,6 +433,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         listing_rate_percent,
         is_bnb,
         add_liquidity_transaction_hash,
+        category,
       } = result;
       const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
       const baseTokenDecimals = await rpc.getERC20Decimals(base_token_address);
@@ -509,6 +512,7 @@ routes.post('/get_ilo', async (req: Request, res: Response<{ilo: IIlo}>) => {
         is_Bnb: !!is_bnb,
         lpGenerationTimestamp: lpGenerationTimestamp.toString(),
         addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
+        category,
       };
       return res.send({ilo});
     } finally {
@@ -549,6 +553,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
         listing_rate_percent: string;
         is_bnb: number;
         add_liquidity_transaction_hash: string | null;
+        category: string | null;
       }>
     >(
       `SELECT
@@ -575,6 +580,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
 			"presale_amount",
 			"energyfi_token_fee_percent",
 			"listing_rate_percent",
+      "category",
 			"is_bnb"
 		FROM "ilos"`,
     );
@@ -606,6 +612,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           listing_rate_percent,
           is_bnb,
           add_liquidity_transaction_hash,
+          category,
         } = result;
         const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
         const baseTokenDecimals = await rpc.getERC20Decimals(base_token_address);
@@ -683,6 +690,7 @@ routes.post('/get_ilos', async (req: Request, res: Response<{ilos: Array<IIlo>}>
           is_Bnb: !!is_bnb,
           lpGenerationTimestamp: lpGenerationTimestamp.toString(),
           addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
+          category,
         };
       }),
     ).then(results =>
@@ -948,6 +956,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       listing_rate_percent,
       is_bnb,
       add_liquidity_transaction_hash,
+      category,
     } = results;
     const saleTokenDecimals = await rpc.getERC20Decimals(sale_token_address);
     const baseTokenDecimals = await rpc.getERC20Decimals(base_token_address);
@@ -1026,6 +1035,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
       is_Bnb: !!is_bnb,
       lpGenerationTimestamp: lpGenerationTimestamp.toString(),
       addLiquidityTransactionHash: add_liquidity_transaction_hash ?? '',
+      category,
       referral: [],
     };
 
