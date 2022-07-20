@@ -24,6 +24,7 @@ interface CreateIloRequestBody {
   websiteURL: string;
   whitepaperURL: string;
   description: string;
+  category: string;
 }
 
 interface CreateIloReferallRequest {
@@ -98,6 +99,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     websiteURL,
     whitepaperURL,
     description,
+    category,
   }: CreateIloRequestBody = req.body;
   if (typeof iloName !== 'string') {
     throw new Error('iloName is invalid');
@@ -252,7 +254,8 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				"token_fee_address",
 				"referral_fee_address",
 				"listing_rate_percent",
-				"is_bnb"
+				"is_bnb",
+        "category"
 			) VALUES (
 				$ilo_name,
 				$creator_address,
@@ -284,7 +287,8 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
 				$token_fee_address,
 				$referral_fee_address,
 				$listing_rate_percent,
-				$is_bnb
+				$is_bnb,
+        $category
 			);`);
     try {
       await stmt.bind({
@@ -319,6 +323,7 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
         $referral_fee_address: referralFeeAddress,
         $listing_rate_percent: listingRatePercent.toString(),
         $is_bnb: is_BNB ? 1 : 0,
+        $category: category || null,
       });
       await stmt.run();
     } finally {
