@@ -898,6 +898,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
   }
 
   const db = await openDb();
+
   try {
     let results = [];
     let stmt = await db.prepare(`
