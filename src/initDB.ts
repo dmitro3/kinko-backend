@@ -44,7 +44,7 @@ const initDB = async () => {
 				"listing_rate_percent" TEXT NOT NULL,
 				"is_bnb" INTEGER NOT NULL,
 				"add_liquidity_transaction_hash" TEXT,
-				category TEXT NULL,
+				"category" TEXT NULL,
 				PRIMARY KEY("id" AUTOINCREMENT)
 			);`,
       );
