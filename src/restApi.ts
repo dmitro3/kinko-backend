@@ -899,7 +899,6 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
 
   const db = await openDb();
   try {
-    let ilosData: any = [];
     let results = [];
     let stmt = await db.prepare(`
     SELECT *, i.id as ilosId
@@ -1040,7 +1039,7 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
     select * from (SELECT *, i.id as ilosId
 			FROM ilos_referral ir
       LEFT JOIN ilos i ON ir.ilos_id = i.id and ir.referral_id = $referralId 
-		order by ir.id ASC) as tmp where status = true`);
+		order by ir.id DESC limit 3) as tmp where status = true`);
       try {
         await stmt.bind({$referralId: referralId});
         const result = await stmt.all();
