@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js';
 import {IMAGES_PATH} from 'constants/env';
 import {sha256} from 'ethereumjs-util';
-// import fs from 'fs/promises';
+import {promises as fsPromises} from 'fs';
+
 import {join} from 'path';
 import sharp from 'sharp';
 import {IIloStatus} from 'types';
@@ -60,7 +61,7 @@ export const saveImage = async (data: string): Promise<string> => {
   const buffer = Buffer.from(matches[1], 'base64');
   const resizedBuffer = await sharp(buffer).resize(500, 500, {fit: 'outside'}).jpeg().toBuffer();
   const fileName = `${sha256(resizedBuffer).toString('hex')}.jpg`;
-  // fs.writeFile(join(IMAGES_PATH, fileName), resizedBuffer);
+  fsPromises.writeFile(join(IMAGES_PATH, fileName), resizedBuffer);
   return fileName;
 };
 
