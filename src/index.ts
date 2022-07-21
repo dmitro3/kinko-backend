@@ -9,11 +9,13 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import {routes} from 'restApi';
 import {errorToString, logError} from 'utils';
+const path = require('path');
 
 const main = async () => {
   const app = express();
   app.use(morgan('tiny'));
   app.use(helmet());
+  app.use('/static', express.static(path.join(__dirname, '../images')));
 
   // const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://cosmic-mousse-dc75c6.netlify.app'];
   // const corsOptions = {
