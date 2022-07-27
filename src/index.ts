@@ -32,6 +32,10 @@ const main = async () => {
   app.use(express.urlencoded({extended: true, limit: '10mb'})); // for parsing application/x-www-form-urlencoded
   app.use('/api/v1', routes);
 
+  app.get('/', (req, res) => {
+    res.status(200).json({message: 'Kinko access url working properly'});
+  });
+
   // Error handler
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
