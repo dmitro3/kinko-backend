@@ -71,4 +71,39 @@ const initDB = async () => {
   }
 };
 
-initDB();
+
+const charity = async () => {
+	try {
+	  const db = await openDb();
+	  try {
+		
+		await db.exec(
+		  `CREATE TABLE "charityData" (
+				  "id" INTEGER NOT NULL UNIQUE,
+				  "charityIndex" TEXT NOT NULL,
+				  "charityReward" TEXT NOT NULL,
+				  "distributionTime" TEXT NOT NULL,
+				  "endingTime" TEXT NOT NULL,
+				  "startingTime" TEXT NULL,
+				  "charityAddressId" TEXT,
+				  "charityAddressCreator" TEXT,
+				  "charityAddressRewardToken" TEXT,
+				  "charityAddressSourceToken" TEXT,
+				  "Timestamp" TIMESTAMP,
+				  PRIMARY KEY("id" AUTOINCREMENT)
+				);`,
+		);
+	  } finally {
+		await db.close();
+	  }
+  
+	  console.log('Success!');
+	  process.exit(0);
+	} catch (e) {
+	  console.log('db error', e);
+	  process.exit(1);
+	}
+  };
+
+charity();
+// initDB();
