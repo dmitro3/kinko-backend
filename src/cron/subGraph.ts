@@ -23,6 +23,7 @@ export const getDataFromSubgraphUrl = async () => {
         charityAddress {
           id
           creator
+          charityAddress
           rewardToken
           sourceToken
         }
@@ -48,16 +49,18 @@ export const getDataFromSubgraphUrl = async () => {
       "distributionTime" ,
       "endingTime" ,
       "startingTime",
+      "charityAddress",
       "charityAddressId",
       "charityAddressCreator",
       "charityAddressRewardToken",
       "charityAddressSourceToken",
-      "Timestamp") 
+      "timestamp") 
         VALUES ("${charity.charityIndex}",
         "${charity.charityReward}",
         "${charity.distributionTime}",
         "${charity.endingTime}",
         "${charity.startingTime}",
+        "${charity.charityAddress.charityAddress}",
         "${charity.charityAddress.id}",
         "${charity.charityAddress.creator}",
         "${charity.charityAddress.rewardToken}",

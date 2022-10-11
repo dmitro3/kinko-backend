@@ -1171,14 +1171,17 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
     await db.close();
   }
 });
-routes.get('/get-charity-data-by-id/:id', async (req: Request, res: Response) => {
+routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
   const db = await openDb();
   try {
-    const {charityAddressId,charityIndex} = req.params;
-    if (!charityAddressId) {
-      return res.status(400).send('charityAddressId is required!');
+    const {charityAddress,charityIndex} = req.body;
+    if (!charityAddress) {
+      return res.status(400).send('charityAddress is required!');
     }
-    let stmt = await db.prepare(`SELECT * FROM charityData WHERE id = ${charityAddressId} and charityIndex = ${charityIndex} ;`);
+    if (!charityIndex) {
+      return res.status(400).send('charityIndex is required!');
+    }
+    let stmt = await db.prepare(`SELECT * FROM charityData WHERE charityAddress = "${charityAddress}" AND charityIndex = ${charityIndex};`);
     const result = await stmt.get();
     await stmt.finalize();
     return res.status(200).send(result);

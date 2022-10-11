@@ -85,6 +85,7 @@ const charity = async () => {
 				  "distributionTime" TEXT NOT NULL,
 				  "endingTime" TEXT NOT NULL,
 				  "startingTime" TEXT NULL,
+				  "charityAddress" TEXT,
 				  "charityAddressId" TEXT,
 				  "charityAddressCreator" TEXT,
 				  "charityAddressRewardToken" TEXT,
