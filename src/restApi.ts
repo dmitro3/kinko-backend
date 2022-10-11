@@ -8,7 +8,7 @@ import {AsyncRouter} from 'express-async-router';
 import {rpc} from 'rpc';
 import {IIlo} from 'types';
 import {getIloStatus, saveImage} from 'utils';
-
+import {getDataFromSubgraphUrl} from './cron/subGraph';
 export const routes = AsyncRouter();
 
 interface CreateIloRequestBody {
@@ -329,7 +329,6 @@ routes.post('/create_ilo', async (req: Request, res: Response) => {
     } finally {
       await stmt.finalize();
     }
-
     return res.send();
   } finally {
     await db.close();
@@ -903,7 +902,6 @@ routes.post('/create-referral', async (req: Request, res: Response) => {
     await db.close();
   }
 });
-
 routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
   const {referralId}: CreateIloReferallRequest = req.body;
   if (typeof referralId !== 'string') {
@@ -1086,7 +1084,6 @@ routes.post('/get-referral-by-id', async (req: Request, res: Response) => {
     await db.close();
   }
 });
-
 routes.get('/get-all-referral', async (req: Request, res: Response) => {
   const db = await openDb();
   try {
@@ -1157,6 +1154,68 @@ routes.get('/get-all-referral', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
     return res.json({result: ilosData});
+  } finally {
+    await db.close();
+  }
+});
+routes.get('/get-charity-data', async (req: Request, res: Response) => {
+  const db = await openDb();
+  try {
+    let stmt = await db.prepare(`SELECT * FROM charityData;`);
+    const result = await stmt.all();
+    await stmt.finalize();
+    return res.status(200).send(result);
+  } catch (error: any) {
+    return res.status(500).send(error.message);
+  } finally {
+    await db.close();
+  }
+});
+routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
+  const db = await openDb();
+  try {
+    const {charityAddress,charityIndex} = req.body;
+    if (!charityAddress) {
+      return res.status(400).send('charityAddress is required!');
+    }
+    if (!charityIndex) {
+      return res.status(400).send('charityIndex is required!');
+    }
+    let stmt = await db.prepare(`SELECT * FROM charityData WHERE charityAddress = "${charityAddress}" AND charityIndex = ${charityIndex};`);
+    const result = await stmt.get();
+    await stmt.finalize();
+    return res.status(200).send(result);
+  } catch (error: any) {
+    return res.status(500).send(error.message);
+  } finally {
+    await db.close();
+  }
+});
+
+
+// only for testing purpose
+routes.get('/get-data-form-subgraph', async (req: Request, res: Response) => {
+  try {
+    await getDataFromSubgraphUrl();
+    return res.status(200).send('get data from subgraph ');
+  } catch (error:any) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
+});
+routes.get('/truncate-table', async (req: Request, res: Response) => {
+  const db = await openDb();
+  try {
+    const stmt = await db.prepare(`Delete from charityData;`);
+    try {
+      await stmt.run();
+    } finally {
+      await stmt.finalize();
+    }
+    return res.status(200).send('Truncate Table successfully');
+  } catch (error:any) {
+    console.log(error);
+    return res.status(500).send(error.message);
   } finally {
     await db.close();
   }

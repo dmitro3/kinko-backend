@@ -9,7 +9,8 @@ type IEnvProperties =
   | 'LAUNCHPAD_SETTINGS_ADDRESS'
   | 'EARLY_ACCESS_TOKEN_ADDRESS'
   | 'EARLY_ACCESS_TOKEN_AMOUNT'
-  | 'WBNB_ADDRESS';
+  | 'WBNB_ADDRESS'
+  |  'SUB_GRAPH_URL';
 
 const exitWithErrorMessage = (errorMessage: string) => {
   console.error(errorMessage);
@@ -57,3 +58,4 @@ export const LAUNCHPAD_SETTINGS_ADDRESS = getEnvString('LAUNCHPAD_SETTINGS_ADDRE
 export const EARLY_ACCESS_TOKEN_ADDRESS = getEnvString('EARLY_ACCESS_TOKEN_ADDRESS');
 export const EARLY_ACCESS_TOKEN_AMOUNT = getEnvBigNumber('EARLY_ACCESS_TOKEN_AMOUNT');
 export const WBNB_ADDRESS = getEnvString('WBNB_ADDRESS');
+export const SUB_GRAPH_URL = getEnvString('SUB_GRAPH_URL');

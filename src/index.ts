@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
-
+import './cron/cron'
 import {HOST, PORT} from 'constants/env';
 import cors from 'cors';
 import express, {NextFunction, Request, Response} from 'express';
