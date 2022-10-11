@@ -54,7 +54,7 @@ export const getDataFromSubgraphUrl = async () => {
       "charityAddressCreator",
       "charityAddressRewardToken",
       "charityAddressSourceToken",
-      "timestamp") 
+      "Timestamp") 
         VALUES ("${charity.charityIndex}",
         "${charity.charityReward}",
         "${charity.distributionTime}",
