@@ -1178,7 +1178,7 @@ routes.get('/get-charity-data-by-id/:id', async (req: Request, res: Response) =>
     if (!id) {
       return res.status(400).send('id is required!');
     }
-    let stmt = await db.prepare(`SELECT * FROM charityData WHERE id = ${id};`);
+    let stmt = await db.prepare(`SELECT * FROM charityData WHERE charityIndex = ${id};`);
     const result = await stmt.get();
     await stmt.finalize();
     return res.status(200).send(result);
