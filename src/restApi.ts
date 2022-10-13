@@ -1166,26 +1166,21 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
     let stmt = await db.prepare(`SELECT * FROM charityData;`);
     let result = await stmt.all();
     await stmt.finalize();
-    const upComing = result.filter(recode => {
+     result = result.filter(recode => {
+      const startingTime = moment(recode.startingTime);
+      const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days')
       if ((recode.startingTime) > moment().format('YYYY-MM-DD HH:mm:ss')) {
         recode.status = 'upcoming';
         return recode;
-      }
-    });
-    const live = result.filter(recode => {
-      const startingTime = moment(recode.startingTime);
-      const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days');
-      if (duration === 0) {
+      }else if (duration === 0){
         recode.status = 'live';
+        return recode;
+      }else{
+        recode.status = "success";
         return recode;
       }
     });
-    const data = {
-      allCharity: result,
-      upComing,
-      live,
-    };
-    return res.status(200).send(data);
+    return res.status(200).send(result);
   } catch (error: any) {
     return res.status(500).send(error.message);
   } finally {

@@ -16,20 +16,30 @@ export const getDataFromSubgraphUrl = async () => {
     const url = SUB_GRAPH_URL;
     const query = {
       query: ` {\n  createCharities(\n   skip: ${limit}, first: 1000\n ) {
-        charityIndex
-        charityReward
-        distributionTime
-        endingTime
-        startingTime
-        charityAddress {
+        
+          charityReward
+          charityIndex
           id
-          creator
-          charityAddress
-          rewardToken
-          sourceToken
-        }
-        Timestamp
-             }\n}`,
+          endingTime
+          startingTime
+          distributionTime
+          charityAddress {
+            charityAddress
+            creator
+            id
+            rewardToken {
+              Address
+              Name
+              Symbol
+            }
+            sourceToken {
+              Address
+              Name
+              Symbol
+            }
+          }
+          Timestamp
+       }\n}`,
       variables: null,
       operationName: 'MyQuery',
       extensions: {
@@ -61,8 +71,12 @@ export const getDataFromSubgraphUrl = async () => {
           "charityAddress",
           "charityAddressId",
           "charityAddressCreator",
-          "charityAddressRewardToken",
-          "charityAddressSourceToken",
+          "RewardTokenAddress",
+				  "RewardTokenName",
+          "RewardTokenSymbol",
+				  "SourceTokenAddress",
+          "SourceTokenName",
+          "SourceTokenSymbol" ,
           "Timestamp") 
           VALUES ("${charity.charityIndex}",
           "${charity.charityReward}",
@@ -72,8 +86,12 @@ export const getDataFromSubgraphUrl = async () => {
           "${charity.charityAddress.charityAddress}",
           "${charity.charityAddress.id}",
           "${charity.charityAddress.creator}",
-          "${charity.charityAddress.rewardToken}",
-          "${charity.charityAddress.sourceToken}",
+          "${charity.charityAddress.rewardToken.Address}",
+          "${charity.charityAddress.rewardToken.Name}",
+          "${charity.charityAddress.rewardToken.Symbol}",
+          "${charity.charityAddress.sourceToken.Address}",
+          "${charity.charityAddress.sourceToken.Name}",
+          "${charity.charityAddress.sourceToken.Symbol}",
           "${charity.Timestamp}");
         `);
         try {
