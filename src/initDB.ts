@@ -82,7 +82,7 @@ const charity = async () => {
 				  "id" INTEGER NOT NULL UNIQUE,
 				  "charityIndex" TEXT NOT NULL,
 				  "charityReward" TEXT NOT NULL,
-				  "distributionTime" TEXT NOT NULL,
+				  "distributionTime" DATE NOT NULL,
 				  "endingTime" DATE ,
 				  "startingTime" DATE ,
 				  "charityAddress" TEXT,
