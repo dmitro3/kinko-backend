@@ -10,6 +10,7 @@ import {IIlo} from 'types';
 import {getIloStatus, saveImage} from 'utils';
 import {getDataFromSubgraphUrl} from './cron/subGraph';
 export const routes = AsyncRouter();
+import moment from 'moment';
 
 interface CreateIloRequestBody {
   iloName: string;
@@ -1161,10 +1162,30 @@ routes.get('/get-all-referral', async (req: Request, res: Response) => {
 routes.get('/get-charity-data', async (req: Request, res: Response) => {
   const db = await openDb();
   try {
+    // let stmt = await db.prepare(`SELECT * FROM charityData WHERE startingTime < "${moment().format("YYYY-MM-DD")}";`);
     let stmt = await db.prepare(`SELECT * FROM charityData;`);
-    const result = await stmt.all();
+    let result = await stmt.all();
     await stmt.finalize();
-    return res.status(200).send(result);
+    const upComing = result.filter(recode => {
+      if ((recode.startingTime) > moment().format('YYYY-MM-DD HH:mm:ss')) {
+        recode.status = 'upcoming';
+        return recode;
+      }
+    });
+    const live = result.filter(recode => {
+      const startingTime = moment(recode.startingTime);
+      const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days');
+      if (duration === 0) {
+        recode.status = 'live';
+        return recode;
+      }
+    });
+    const data = {
+      allCharity: result,
+      upComing,
+      live,
+    };
+    return res.status(200).send(data);
   } catch (error: any) {
     return res.status(500).send(error.message);
   } finally {
@@ -1174,14 +1195,16 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
 routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
   const db = await openDb();
   try {
-    const {charityAddress,charityIndex} = req.body;
+    const {charityAddress, charityIndex} = req.body;
     if (!charityAddress) {
       return res.status(400).send('charityAddress is required!');
     }
     if (!charityIndex) {
       return res.status(400).send('charityIndex is required!');
     }
-    let stmt = await db.prepare(`SELECT * FROM charityData WHERE charityAddress = "${charityAddress}" AND charityIndex = ${charityIndex};`);
+    let stmt = await db.prepare(
+      `SELECT * FROM charityData WHERE charityAddress = "${charityAddress}" AND charityIndex = ${charityIndex};`,
+    );
     const result = await stmt.get();
     await stmt.finalize();
     return res.status(200).send(result);
@@ -1192,13 +1215,12 @@ routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
   }
 });
 
-
 // only for testing purpose
 routes.get('/get-data-form-subgraph', async (req: Request, res: Response) => {
   try {
     await getDataFromSubgraphUrl();
     return res.status(200).send('get data from subgraph ');
-  } catch (error:any) {
+  } catch (error: any) {
     console.log(error);
     return res.status(500).send(error.message);
   }
@@ -1213,7 +1235,7 @@ routes.get('/truncate-table', async (req: Request, res: Response) => {
       await stmt.finalize();
     }
     return res.status(200).send('Truncate Table successfully');
-  } catch (error:any) {
+  } catch (error: any) {
     console.log(error);
     return res.status(500).send(error.message);
   } finally {

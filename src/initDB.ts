@@ -83,8 +83,8 @@ const charity = async () => {
 				  "charityIndex" TEXT NOT NULL,
 				  "charityReward" TEXT NOT NULL,
 				  "distributionTime" TEXT NOT NULL,
-				  "endingTime" TEXT NOT NULL,
-				  "startingTime" TEXT NULL,
+				  "endingTime" DATE NOT NULL,
+				  "startingTime" DATE NULL,
 				  "charityAddress" TEXT,
 				  "charityAddressId" TEXT,
 				  "charityAddressCreator" TEXT,
@@ -107,4 +107,4 @@ const charity = async () => {
   };
 
 charity();
-// initDB();
+initDB();
