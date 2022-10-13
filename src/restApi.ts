@@ -1194,7 +1194,7 @@ routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
     if (!charityAddress) {
       return res.status(400).send('charityAddress is required!');
     }
-    if (!charityIndex) {
+    if (charityIndex == null) {
       return res.status(400).send('charityIndex is required!');
     }
     let stmt = await db.prepare(
