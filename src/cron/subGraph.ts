@@ -58,12 +58,12 @@ export const getDataFromSubgraphUrl = async () => {
        WHERE charityIndex = "${charity.charityIndex}" AND charityAddress = "${charity.charityAddress.charityAddress}";`);
       const findRecode = await stmt.get();
       await stmt.finalize();
-
       if (findRecode?.recode === 0) {
         // new Date(new Date(Date.now()).getTime() + 12*6000000)
-        const startingTime = moment.utc(parseInt(charity.startingTime)).format('YYYY-MM-DD HH:mm:ss');
-        const endingTime = moment.utc(parseInt(charity.endingTime)).format('YYYY-MM-DD HH:mm:ss');
-        const distributionTime = moment.utc(parseInt(charity.distributionTime)).format('YYYY-MM-DD HH:mm:ss');
+
+        const startingTime = moment.unix(parseInt(charity.startingTime)).format('YYYY-MM-DD HH:mm:ss');
+        const endingTime = moment.unix(parseInt(charity.endingTime)).format('YYYY-MM-DD HH:mm:ss');
+        const distributionTime = moment.unix(parseInt(charity.distributionTime)).format('YYYY-MM-DD HH:mm:ss');
         const charityData = await db.prepare(`
           INSERT INTO charityData ("charityIndex",
           "charityReward" ,
