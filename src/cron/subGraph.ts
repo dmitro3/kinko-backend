@@ -3,7 +3,7 @@ import {openDb} from 'db';
 import {SUB_GRAPH_URL} from '../constants/env';
 import moment from 'moment';
 
-export const getDataFromSubgraphUrl = async () => {
+export const getCharityDataFromSubgraphUrl = async () => {
   try {
     const db = await openDb();
     let limit: number = 0;
@@ -78,7 +78,8 @@ export const getDataFromSubgraphUrl = async () => {
           "RewardTokenSymbol",
 				  "SourceTokenAddress",
           "SourceTokenName",
-          "SourceTokenSymbol" ,
+          "SourceTokenSymbol",
+          "totalDonation",
           "Timestamp") 
           VALUES ("${charity.charityIndex}",
           "${charity.charityReward}",
@@ -94,12 +95,82 @@ export const getDataFromSubgraphUrl = async () => {
           "${charity.charityAddress.sourceToken.Address}",
           "${charity.charityAddress.sourceToken.Name}",
           "${charity.charityAddress.sourceToken.Symbol}",
+          "${0}",
           "${charity.Timestamp}");
         `);
         try {
           await charityData.run();
         } finally {
           await charityData.finalize();
+        }
+      }
+    }
+    console.log('cron is running');
+  } catch (error: any) {
+    console.log('error', error.message);
+  }
+};
+
+export const getDonorListDataFromSubgraphUrl = async () => {
+  try {
+    const db = await openDb();
+    let limit: number = 0;
+    // const stmt = await db.prepare(` SELECT COUNT(id) as count FROM donorList;`)
+    // const count = await stmt.get();
+    // await stmt.finalize();
+    // if(count?.count){
+    //   limit = count.count
+    // }
+    const url = SUB_GRAPH_URL;
+    const query = {
+      query: ` {\n  donorLists(\n   skip: ${limit}, first: 1000\n ) {
+        DonationAmount
+        DonerAddress
+        charityAddress
+        charityIndex
+        donorList
+        id
+      }\n}`,
+      variables: null,
+      operationName: 'MyQuery',
+      extensions: {
+        headers: null,
+      },
+    };
+    let config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const result = await axios.post(url, query, config);
+    let createDonorList =
+      result.status == 200
+        ? result.data
+          ? result.data.data.donorLists === null
+            ? 0
+            : result.data.data.donorLists
+          : 0
+        : 0;
+    for (const donor of createDonorList) {
+      let stmt = await db.prepare(`SELECT COUNT(*) as recode FROM donorList
+       WHERE charityIndex = "${donor.charityIndex}" AND donorAddress = "${donor.DonerAddress}";`);
+      const findRecode = await stmt.get();
+      await stmt.finalize();
+      if (findRecode?.recode === 0) {
+        const donorList = await db.prepare(`
+          INSERT INTO donorList ("charityIndex", "charityAddress" ,"donorAddress", 
+          donorId,"donatedAmount" ,"donorList") 
+          VALUES ("${donor.charityIndex}",
+          "${donor.charityAddress}",
+          "${donor.DonerAddress}",
+          "${donor.id}",
+          "${donor.DonationAmount}",
+          "${donor.donorList}");
+          `);
+        try {
+          await donorList.run();
+        } finally {
+          await donorList.finalize();
         }
       }
     }

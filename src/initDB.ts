@@ -62,7 +62,6 @@ const initDB = async () => {
     } finally {
       await db.close();
     }
-
     console.log('Success!');
     process.exit(0);
   } catch (e) {
@@ -71,14 +70,12 @@ const initDB = async () => {
   }
 };
 
-
 const charity = async () => {
-	try {
-	  const db = await openDb();
-	  try {
-		
-		await db.exec(
-		  `CREATE TABLE "charityData" (
+  try {
+    const db = await openDb();
+    try {
+      await db.exec(
+        `CREATE TABLE "charityData" (
 				  "id" INTEGER NOT NULL UNIQUE,
 				  "charityIndex" TEXT NOT NULL,
 				  "charityReward" TEXT NOT NULL,
@@ -94,21 +91,50 @@ const charity = async () => {
 				  "SourceTokenAddress" TEXT,
                   "SourceTokenName" TEXT,
                   "SourceTokenSymbol" TEXT,
+				  "totalDonation" INTEGER DEFAULT 0,
 				  "Timestamp" TIMESTAMP,
 				  PRIMARY KEY("id" AUTOINCREMENT)
 				);`,
-		);
-	  } finally {
-		await db.close();
-	  }
-  
-	  console.log('Success!');
-	  process.exit(0);
-	} catch (e) {
-	  console.log('db error', e);
-	  process.exit(1);
-	}
-  };
+      );
+    } finally {
+      await db.close();
+    }
 
+    console.log('Success!');
+    process.exit(0);
+  } catch (e) {
+    console.log('db error', e);
+    process.exit(1);
+  }
+};
+
+const donorList = async () => {
+  try {
+    const db = await openDb();
+    try {
+      await db.exec(
+        `CREATE TABLE "donorList" (
+				  "id" INTEGER NOT NULL UNIQUE,
+				  "charityIndex" TEXT NOT NULL,
+				  "charityAddress" TEXT,
+				  "donorAddress" TEXT,
+				  "donorId" TEXT,
+				  "donatedAmount" INTEGER,
+				  "donorList" TEXT NOT NULL,
+				  PRIMARY KEY("id" AUTOINCREMENT)
+				);`,
+      );
+    } finally {
+      await db.close();
+    }
+    console.log('Success!');
+    process.exit(0);
+  } catch (e) {
+    console.log('db error', e);
+    process.exit(1);
+  }
+};
+
+donorList();
 charity();
 initDB();

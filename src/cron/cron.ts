@@ -1,6 +1,8 @@
 import cron from 'node-cron';
-import {getDataFromSubgraphUrl} from './subGraph';
+import { getCharityDataFromSubgraphUrl , getDonorListDataFromSubgraphUrl } from './subGraph';
 
 cron.schedule('*/10 * * * *', async () => {
-  await getDataFromSubgraphUrl();
+  await getCharityDataFromSubgraphUrl();
+  await getDonorListDataFromSubgraphUrl();
 });
+
