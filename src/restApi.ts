@@ -1170,11 +1170,12 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
     result = result.filter(recode => {
       const startingTime = moment.unix(parseInt(recode.secondStartingTime));
       const endingTime = moment.unix(parseInt(recode.secondEndingTime));
-      const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
+      const startDuration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
+      const endDuration = endingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
       if (startingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
         recode.status = 'upcoming';
         return recode;
-      } else if (duration >= 0 && endingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
+      } else if (startDuration >= 0 && endDuration <= 0) {
         recode.status = 'live';
         return recode;
       } else {
