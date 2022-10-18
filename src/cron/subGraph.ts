@@ -60,7 +60,7 @@ export const getCharityDataFromSubgraphUrl = async () => {
       await stmt.finalize();
       if (findRecode?.recode === 0) {
         // new Date(new Date(Date.now()).getTime() + 12*6000000)
-
+        
         const startingTime = moment.unix(parseInt(charity.startingTime)).format('YYYY-MM-DD HH:mm:ss');
         const endingTime = moment.unix(parseInt(charity.endingTime)).format('YYYY-MM-DD HH:mm:ss');
         const distributionTime = moment.unix(parseInt(charity.distributionTime)).format('YYYY-MM-DD HH:mm:ss');
@@ -80,6 +80,9 @@ export const getCharityDataFromSubgraphUrl = async () => {
           "SourceTokenName",
           "SourceTokenSymbol",
           "totalDonation",
+          "secondDistributionTime",
+				  "secondEndingTime",
+				  "secondStartingTime",
           "Timestamp") 
           VALUES ("${charity.charityIndex}",
           "${charity.charityReward}",
@@ -96,6 +99,9 @@ export const getCharityDataFromSubgraphUrl = async () => {
           "${charity.charityAddress.sourceToken.Name}",
           "${charity.charityAddress.sourceToken.Symbol}",
           "${0}",
+          "${charity.distributionTime}",
+          "${charity.startingTime}",
+          "${charity.endingTime}",
           "${charity.Timestamp}");
         `);
         try {
@@ -105,7 +111,7 @@ export const getCharityDataFromSubgraphUrl = async () => {
         }
       }
     }
-    console.log('cron is running');
+    // console.log('cron is running');
   } catch (error: any) {
     console.log('error', error.message);
   }
@@ -174,7 +180,7 @@ export const getDonorListDataFromSubgraphUrl = async () => {
         }
       }
     }
-    console.log('cron is running');
+    // console.log('cron is running');
   } catch (error: any) {
     console.log('error', error.message);
   }

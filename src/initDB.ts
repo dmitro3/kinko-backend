@@ -92,6 +92,9 @@ const charity = async () => {
                   "SourceTokenName" TEXT,
                   "SourceTokenSymbol" TEXT,
 				  "totalDonation" INTEGER DEFAULT 0,
+				  "secondDistributionTime" DATE NOT NULL,
+				  "secondEndingTime" DATE ,
+				  "secondStartingTime" DATE ,
 				  "Timestamp" TIMESTAMP,
 				  PRIMARY KEY("id" AUTOINCREMENT)
 				);`,

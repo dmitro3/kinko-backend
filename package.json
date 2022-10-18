@@ -30,6 +30,8 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@sentry/node": "^7.15.0",
+    "@sentry/tracing": "^7.15.0",
     "@types/node-cron": "^3.0.4",
     "axios": "^1.1.2",
     "bignumber.js": "^9.0.1",
