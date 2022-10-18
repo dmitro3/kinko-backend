@@ -1204,9 +1204,9 @@ routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
     );
     const result = await stmt.get();
     await stmt.finalize();
-    const startingTime = moment(result.startingTime);
+    const startingTime = moment.unix(parseInt(result.secondStartingTime));
     const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days');
-    if (result.startingTime > moment().format('YYYY-MM-DD HH:mm:ss')) {
+    if (startingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
       result.status = 'upcoming';
     } else if (duration === 0) {
       result.status = 'live';
