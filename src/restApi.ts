@@ -1169,7 +1169,8 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
     await stmt.finalize();
     result = result.filter(recode => {
       const startingTime = moment.unix(parseInt(recode.secondStartingTime));
-      const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days');
+      const currentDate = Date.now()
+      const duration = startingTime.diff(moment(currentDate).format('YYYY-MM-DD HH:mm:ss'), 'days');
       if (startingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
         recode.status = 'upcoming';
         return recode;
