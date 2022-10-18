@@ -100,8 +100,8 @@ export const getCharityDataFromSubgraphUrl = async () => {
           "${charity.charityAddress.sourceToken.Symbol}",
           "${0}",
           "${charity.distributionTime}",
-          "${charity.startingTime}",
           "${charity.endingTime}",
+          "${charity.startingTime}",
           "${charity.Timestamp}");
         `);
         try {
