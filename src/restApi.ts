@@ -1172,7 +1172,6 @@ routes.get('/get-charity-data', async (req: Request, res: Response) => {
       const endingTime = moment.unix(parseInt(recode.secondEndingTime));
       const startDuration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
       const endDuration = endingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
-      // console.log(startDuration >= 0 && endDuration <= 0,startDuration,endDuration)
       if (startingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
         recode.status = 'upcoming';
         return recode;
@@ -1208,10 +1207,12 @@ routes.post('/get-charity-data-by-id', async (req: Request, res: Response) => {
     const result = await stmt.get();
     await stmt.finalize();
     const startingTime = moment.unix(parseInt(result.secondStartingTime));
-    const duration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'days');
+    const endingTime = moment.unix(parseInt(result.secondEndingTime));
+    const startDuration = startingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
+    const endDuration = endingTime.diff(moment().format('YYYY-MM-DD HH:mm:ss'), 'minutes')
     if (startingTime.format('YYYY-MM-DD HH:mm:ss') > moment().format('YYYY-MM-DD HH:mm:ss')) {
       result.status = 'upcoming';
-    } else if (duration === 0) {
+    } else if (startDuration <= 0 && endDuration >= 0) {
       result.status = 'live';
     } else {
       result.status = 'success';
