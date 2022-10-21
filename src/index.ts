@@ -51,7 +51,7 @@ const main = async () => {
   });
 
   app.use(Sentry.Handlers.errorHandler());
-  cron.schedule('*/2 * * * *', () => {
+  cron.schedule('*/10 * * * * *', () => {
     startCron()
   });
   app.listen(PORT, HOST);

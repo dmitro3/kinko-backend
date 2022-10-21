@@ -7,12 +7,12 @@ export const getCharityDataFromSubgraphUrl = async () => {
   try {
     const db = await openDb();
     let limit: number = 0;
-    // const stmt = await db.prepare(` SELECT COUNT(id) as count FROM charityData;`)
-    // const count = await stmt.get();
-    // await stmt.finalize();
-    // if(count?.count){
-    //   limit = count.count
-    // }
+    const stmt = await db.prepare(` SELECT COUNT(id) as count FROM charityData;`)
+    const count = await stmt.get();
+    await stmt.finalize();
+    if(count?.count){
+      limit = count.count
+    }
     const url = SUB_GRAPH_URL;
     const query = {
       query: ` {\n  createCharities(\n   skip: ${limit}, first: 1000\n ) {
@@ -120,12 +120,12 @@ export const getDonorListDataFromSubgraphUrl = async () => {
   try {
     const db = await openDb();
     let limit: number = 0;
-    // const stmt = await db.prepare(` SELECT COUNT(id) as count FROM donorList;`)
-    // const count = await stmt.get();
-    // await stmt.finalize();
-    // if(count?.count){
-    //   limit = count.count
-    // }
+    const stmt = await db.prepare(` SELECT COUNT(id) as count FROM donorList;`)
+    const count = await stmt.get();
+    await stmt.finalize();
+    if(count?.count){
+      limit = count.count
+    }
     const url = SUB_GRAPH_URL;
     const query = {
       query: ` {\n  donorLists(\n   skip: ${limit}, first: 1000\n ) {
